@@ -3,42 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi Metronome</title>
+    <title>Unlimited Metronomes</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
-        <h1>Multi Metronome</h1>
+    <div class="container">
+        <h1>Unlimited Metronomes</h1>
         <button id="addMetronomeBtn">Add New Metronome</button>
         <div id="metronomesContainer">
             <!-- Metronomes will be added here -->
         </div>
     </div>
-
-    <template id="metronomeTemplate">
-        <div class="metronome-instance">
-            <h3 class="metronome-title">Metronome</h3>
-            <div class="controls">
-                <div class="control-group">
-                    <label>Sound:</label>
-                    <input type="file" class="soundFile" accept="audio/*">
-                    <span class="soundName">No sound loaded</span>
-                </div>
-                <div class="control-group">
-                    <label for="frequencyValue">Frequency:</label>
-                    <input type="number" class="frequencyValue" value="60" min="1">
-                    <select class="frequencyUnit">
-                        <option value="bpm" selected>BPM (Beats Per Minute)</option>
-                        <option value="s">Seconds per beat</option>
-                        <option value="ms">Milliseconds per beat</option>
-                        <option value="m">Minutes per beat</option>
-                    </select>
-                </div>
-                <button class="toggleBtn">Start</button>
-                <button class="removeBtn">Remove</button>
-            </div>
-        </div>
-    </template>
 
     <script src="script.js"></script>
 </body>

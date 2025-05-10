@@ -1,16 +1,17 @@
 body {
     font-family: sans-serif;
-    background-color: #f4f4f4;
+    background-color: #f0f0f0;
     color: #333;
-    line-height: 1.6;
     margin: 0;
     padding: 20px;
+    display: flex;
+    justify-content: center;
 }
 
-.app-container {
-    max-width: 900px;
-    margin: auto;
-    background: #fff;
+.container {
+    width: 90%;
+    max-width: 800px;
+    background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -18,130 +19,102 @@ body {
 
 h1 {
     text-align: center;
-    color: #333;
+    color: #2c3e50;
 }
 
 #addMetronomeBtn {
     display: block;
-    background-color: #5cb85c;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #3498db;
     color: white;
-    padding: 10px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin: 20px auto;
-    font-size: 1em;
+    font-size: 16px;
 }
 
 #addMetronomeBtn:hover {
-    background-color: #4cae4c;
+    background-color: #2980b9;
 }
 
-#metronomesContainer {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.metronome-instance {
+.metronome {
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 5px;
     padding: 15px;
+    margin-bottom: 15px;
     background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.metronome-title {
+.metronome h3 {
     margin-top: 0;
-    color: #555;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    color: #34495e;
 }
 
-.controls {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.control-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap; /* Allow wrapping for smaller screens */
-}
-
-.control-group label {
+.metronome label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
     font-weight: bold;
-    min-width: 80px; /* Ensure labels align nicely */
 }
 
-.control-group input[type="file"],
-.control-group input[type="number"],
-.control-group select {
+.metronome input[type="number"],
+.metronome select,
+.metronome input[type="file"] {
+    width: calc(100% - 22px); /* Adjust for padding/border */
     padding: 8px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    flex-grow: 1; /* Allow inputs to take available space */
+    box-sizing: border-box;
 }
 
-.control-group input[type="file"] {
-    max-width: 250px; /* Prevent file input from becoming too wide */
+.metronome input[type="radio"] {
+    margin-right: 5px;
 }
 
-
-.soundName {
-    font-style: italic;
-    color: #777;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 200px; /* Adjust as needed */
+.metronome .sound-options label {
+    font-weight: normal;
+    margin-right: 15px;
 }
 
-.toggleBtn, .removeBtn {
-    padding: 8px 12px;
+.metronome .file-input-wrapper {
+    margin-top: 5px;
+}
+
+.metronome .controls button {
+    padding: 8px 15px;
+    margin-right: 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s ease;
 }
 
-.toggleBtn {
-    background-color: #007bff;
-    color: white;
-    min-width: 80px; /* Consistent button width */
-}
-
-.toggleBtn.playing {
-    background-color: #ffc107;
-    color: #333;
-}
-
-.toggleBtn:hover {
-    opacity: 0.9;
-}
-
-.removeBtn {
-    background-color: #dc3545;
+.metronome .start-btn {
+    background-color: #2ecc71;
     color: white;
 }
-
-.removeBtn:hover {
-    background-color: #c82333;
+.metronome .start-btn:hover {
+    background-color: #27ae60;
 }
 
-/* Responsive adjustments */
-@media (min-width: 600px) {
-    .controls {
-        flex-direction: row; /* Arrange controls in a row on larger screens */
-        flex-wrap: wrap; /* Allow wrapping if too many controls */
-        align-items: center; /* Vertically align items in the row */
-    }
-    .control-group {
-        flex-basis: auto; /* Reset basis for row layout */
-        margin-bottom: 0; /* Remove bottom margin for row items */
-    }
+.metronome .stop-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+.metronome .stop-btn:hover {
+    background-color: #c0392b;
+}
+
+.metronome .delete-btn {
+    background-color: #95a5a6;
+    color: white;
+    float: right;
+}
+.metronome .delete-btn:hover {
+    background-color: #7f8c8d;
+}
+
+.hidden {
+    display: none;
 }
