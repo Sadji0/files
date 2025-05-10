@@ -1,0 +1,120 @@
+body {
+    font-family: sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+}
+
+#addMetronomeBtn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#addMetronomeBtn:hover {
+    background-color: #2980b9;
+}
+
+.metronome {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+}
+
+.metronome h3 {
+    margin-top: 0;
+    color: #34495e;
+}
+
+.metronome label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.metronome input[type="number"],
+.metronome select,
+.metronome input[type="file"] {
+    width: calc(100% - 22px); /* Adjust for padding/border */
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.metronome input[type="radio"] {
+    margin-right: 5px;
+}
+
+.metronome .sound-options label {
+    font-weight: normal;
+    margin-right: 15px;
+}
+
+.metronome .file-input-wrapper {
+    margin-top: 5px;
+}
+
+.metronome .controls button {
+    padding: 8px 15px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.metronome .start-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+.metronome .start-btn:hover {
+    background-color: #27ae60;
+}
+
+.metronome .stop-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+.metronome .stop-btn:hover {
+    background-color: #c0392b;
+}
+
+.metronome .delete-btn {
+    background-color: #95a5a6;
+    color: white;
+    float: right;
+}
+.metronome .delete-btn:hover {
+    background-color: #7f8c8d;
+}
+
+.hidden {
+    display: none;
+}
