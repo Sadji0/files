@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Игра: Разрушь фигуры!</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script> 
+
+  <!-- A-Frame Physics System (Cannon.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/aframe-physics-system@4.0.1/dist/aframe-physics-system.min.js"></script> 
+</head>
+<body>
+  <!-- Экран начала игры -->
+  <div id="startScreen" class="overlay">
+    <button onclick="startGame()">Начать</button>
+  </div>
+
+  <!-- UI игрового процесса -->
+  <div id="gameUI">
+    <div id="timer">Время: 30</div>
+    <div id="score">Счет: 0</div>
+  </div>
+
+  <!-- Экран окончания игры -->
+  <div id="endScreen" class="overlay hidden">
+    <h1>Игра окончена!</h1>
+    <div id="finalScore">Счет: 0</div>
+    <button onclick="restartGame()">Играть снова</button>
+  </div>
+
+  <!-- Сцена A-Frame -->
+  <a-scene physics="driver: cannon.js;" embedded>
+
+    <!-- Камера -->
+    <a-entity id="cameraRig" position="0 0 0">
+      <a-camera id="camera" look-controls="reverseMouseDrag: true"></a-camera>
+    </a-entity>
+
+    <!-- Освещение -->
+    <a-light type="ambient" color="#ffffff"></a-light>
+    <a-light type="directional" intensity="1" position="-1 1 1"></a-light>
+
+    <!-- Слушатель событий -->
+    <a-entity id="gameController" visible="false"></a-entity>
+
+  </a-scene>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Игра: Разрушь фигуры!</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Подключаем Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script> 
+  <!-- Подключаем Cannon.js -->
+  <script src="https://cdn.jsdelivr.net/npm/cannon@0.6.2/build/cannon.min.js"></script> 
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+
+  <div id="startScreen" class="overlay">
+    <button onclick="startGame()">Начать</button>
+  </div>
+
+  <div id="gameUI">
+    <div id="timer">Время: 30</div>
+    <div id="score">Счет: 0</div>
+  </div>
+
+  <div id="endScreen" class="overlay hidden">
+    <h1>Игра окончена!</h1>
+    <div id="finalScore">Счет: 0</div>
+    <button onclick="restartGame()">Играть снова</button>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
