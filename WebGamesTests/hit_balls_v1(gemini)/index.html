@@ -38,19 +38,20 @@
         </div>
     </div>
 
-    <!-- Подключаем библиотеки -->
-    <!-- Three.js -->
+    <!-- 
+      ИСПРАВЛЕНИЕ: Мы добавляем cannon-es в importmap и убираем старый тег script.
+    -->
     <script type="importmap">
         {
             "imports": {
                 "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/"
+                "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/",
+                "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
             }
         }
     </script>
     
-    <!-- Физический движок Cannon-es -->
-    <script src="https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"></script>
+    <!-- Старый тег для cannon-es удален -->
     
     <!-- Основной скрипт игры -->
     <script type="module" src="main.js"></script>

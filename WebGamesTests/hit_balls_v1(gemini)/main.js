@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+// ИСПРАВЛЕНИЕ: Импортируем cannon-es как модуль
+import * as CANNON from 'cannon-es';
 
 // --- НАСТРОЙКИ ИГРЫ ---
 const GAME_DURATION = 30; // Длительность игры в секундах
@@ -20,7 +22,7 @@ let score = 0;
 let timeLeft = GAME_DURATION;
 let gameInterval, spawnInterval;
 let isGameRunning = false;
-let deviceOrientationControls;
+let cameraGroup; // Переместили сюда для лучшей видимости
 
 // --- DOM ЭЛЕМЕНТЫ ---
 const startScreen = document.getElementById('start-screen');
@@ -42,7 +44,8 @@ function init() {
 
     // 2. Камера
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 1;
+    // Начальная позиция камеры в камере-контейнере
+    camera.position.set(0, 0, 0);
 
     // 3. Рендерер
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -70,13 +73,14 @@ function init() {
     startButton.addEventListener('click', requestPermissionsAndStart);
     restartButton.addEventListener('click', startGame);
     window.addEventListener('resize', onWindowResize);
+    // Используем 'pointerdown' для поддержки и мыши, и касаний
     window.addEventListener('pointerdown', shoot);
 }
 
 // --- УПРАВЛЕНИЕ ИГРОЙ ---
 function requestPermissionsAndStart() {
     // Для iOS 13+ требуется запрос на доступ к датчикам
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission()
             .then(permissionState => {
                 if (permissionState === 'granted') {
@@ -141,9 +145,11 @@ function updateScore(points) {
 }
 
 // --- УПРАВЛЕНИЕ (ОРИЕНТАЦИЯ ТЕЛЕФОНА) ---
-let cameraGroup;
 function setupDeviceOrientation() {
+    // Контейнер для камеры, который мы будем вращать
     cameraGroup = new THREE.Group();
+    // Начальная позиция игрока в мире
+    cameraGroup.position.set(0, 1.6, 0); 
     cameraGroup.add(camera);
     scene.add(cameraGroup);
 }
@@ -151,12 +157,12 @@ function setupDeviceOrientation() {
 function handleOrientation(event) {
     if (!isGameRunning || !event.alpha) return;
 
-    const alpha = THREE.MathUtils.degToRad(event.alpha); // Y-axis rotation
-    const beta = THREE.MathUtils.degToRad(event.beta);  // X-axis rotation
-    const gamma = THREE.MathUtils.degToRad(event.gamma); // Z-axis rotation
+    // Корректирующий Euler для преобразования координат устройства в координаты Three.js
+    const a = THREE.MathUtils.degToRad(event.alpha); // yaw
+    const b = THREE.MathUtils.degToRad(event.beta);  // pitch
+    const g = THREE.MathUtils.degToRad(event.gamma); // roll
     
-    // 'YXZ' порядок лучше всего подходит для FPS-подобного управления
-    const euler = new THREE.Euler(beta, alpha, -gamma, 'YXZ');
+    const euler = new THREE.Euler(b, a, -g, 'YXZ');
     cameraGroup.quaternion.setFromEuler(euler);
 }
 
@@ -166,33 +172,28 @@ function handleOrientation(event) {
 function shoot() {
     if (!isGameRunning) return;
 
-    // Создаем геометрию и материал для снаряда
     const projectileGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-    const projectileMaterial = new THREE.MeshStandardMaterial({ color: 0xffef00 });
+    const projectileMaterial = new THREE.MeshStandardMaterial({ color: 0xffef00, emissive: 0xffff00, emissiveIntensity: 0.5 });
     const projectileMesh = new THREE.Mesh(projectileGeometry, projectileMaterial);
     projectileMesh.castShadow = true;
 
-    // Создаем физическое тело для снаряда
     const projectileShape = new CANNON.Sphere(0.1);
     const projectileBody = new CANNON.Body({ mass: 1, shape: projectileShape });
-    projectileBody.isProjectile = true; // Кастомное свойство для идентификации
+    projectileBody.isProjectile = true; 
 
-    // Устанавливаем начальную позицию и скорость
     const shootDirection = new THREE.Vector3();
     camera.getWorldDirection(shootDirection);
     
-    // Позиция снаряда - это позиция камеры
+    // Начальная позиция снаряда - это позиция камеры в мире
     camera.getWorldPosition(projectileBody.position);
     projectileMesh.position.copy(projectileBody.position);
 
-    // Скорость снаряда
     projectileBody.velocity.set(
         shootDirection.x * PROJECTILE_SPEED,
         shootDirection.y * PROJECTILE_SPEED,
         shootDirection.z * PROJECTILE_SPEED
     );
 
-    // Добавляем объект в мир и на сцену
     addGameObject(projectileMesh, projectileBody);
 }
 
@@ -203,7 +204,7 @@ function spawnRandomShape() {
 
     let geometry, cannonShape;
     const material = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(Math.random(), Math.random(), Math.random()),
+        color: new THREE.Color(Math.random() * 0.8 + 0.2, Math.random() * 0.8 + 0.2, Math.random() * 0.8 + 0.2), // Яркие цвета
         roughness: 0.5,
         metalness: 0.1
     });
@@ -223,7 +224,6 @@ function spawnRandomShape() {
             break;
         case 'torus':
             geometry = new THREE.TorusGeometry(0.5, 0.2, 16, 32);
-            // Для простоты используем сферу как коллайдер для тора
             cannonShape = new CANNON.Sphere(0.7); 
             break;
     }
@@ -233,28 +233,17 @@ function spawnRandomShape() {
     mesh.receiveShadow = true;
 
     const body = new CANNON.Body({ mass: 5, shape: cannonShape });
-    body.isShape = true; // Кастомное свойство
-    body.shapeType = type; // Для определения очков
+    body.isShape = true; 
+    body.shapeType = type;
 
-    // Начальная позиция и скорость
     const x = (Math.random() - 0.5) * 20;
     const y = Math.random() * 10 + 5;
     const z = -20 - Math.random() * 20;
     body.position.set(x, y, z);
     
-    body.velocity.set(
-        (Math.random() - 0.5) * 5,
-        (Math.random() - 0.5) * 10,
-        Math.random() * 10 + 10
-    );
-    
-    body.angularVelocity.set(
-        (Math.random() - 0.5) * 5,
-        (Math.random() - 0.5) * 5,
-        (Math.random() - 0.5) * 5
-    );
+    body.velocity.set((Math.random() - 0.5) * 5, (Math.random() - 0.5) * 10, Math.random() * 10 + 10);
+    body.angularVelocity.set((Math.random() - 0.5) * 5, (Math.random() - 0.5) * 5, (Math.random() - 0.5) * 5);
 
-    // Обработчик столкновений
     body.addEventListener('collide', (event) => handleCollision(event, body, mesh));
 
     addGameObject(mesh, body);
@@ -262,18 +251,11 @@ function spawnRandomShape() {
 
 // Обработка столкновений
 function handleCollision(event, body, mesh) {
-    // Проверяем, было ли столкновение со снарядом
-    if (event.body.isProjectile) {
-        // 1. Создать эффект взрыва
-        createExplosion(body.position);
-
-        // 2. Начислить очки
+    if (body.isShape && event.body.isProjectile) {
+        createExplosion(body.position, mesh.material.color);
         updateScore(SHAPE_SCORES[body.shapeType]);
-
-        // 3. Удалить фигуру и снаряд
         removeGameObject(mesh, body);
         
-        // Находим и удаляем снаряд, который попал
         const projectile = gameObjects.find(obj => obj.body === event.body);
         if (projectile) {
             removeGameObject(projectile.mesh, projectile.body);
@@ -282,14 +264,15 @@ function handleCollision(event, body, mesh) {
 }
 
 // Эффект взрыва
-function createExplosion(position) {
+function createExplosion(position, color) {
     const particleCount = 20;
     const particleGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-    const particleMaterial = new THREE.MeshStandardMaterial({ color: 0xffa500 });
-
+    
     for (let i = 0; i < particleCount; i++) {
+        const particleMaterial = new THREE.MeshStandardMaterial({ color });
         const particleMesh = new THREE.Mesh(particleGeometry, particleMaterial);
         const particleBody = new CANNON.Body({ mass: 0.1, shape: new CANNON.Box(new CANNON.Vec3(0.05, 0.05, 0.05)) });
+        
         particleBody.position.copy(position);
         
         const force = 15;
@@ -298,16 +281,12 @@ function createExplosion(position) {
             (Math.random() - 0.5) * force,
             (Math.random() - 0.5) * force
         );
-
+        particleBody.isParticle = true; // Пометим, чтобы не обрабатывать столкновения
         addGameObject(particleMesh, particleBody);
         
-        // Удаляем частицы через некоторое время
-        setTimeout(() => {
-            removeGameObject(particleMesh, particleBody);
-        }, 1000 + Math.random() * 1000);
+        setTimeout(() => removeGameObject(particleMesh, particleBody), 1000 + Math.random() * 1000);
     }
 }
-
 
 // --- УПРАВЛЕНИЕ ОБЪЕКТАМИ ---
 function addGameObject(mesh, body) {
@@ -320,47 +299,33 @@ function removeGameObject(mesh, body) {
     scene.remove(mesh);
     world.removeBody(body);
     
-    // Очистка памяти GPU
-    if(mesh.geometry) mesh.geometry.dispose();
-    if(mesh.material) mesh.material.dispose();
+    if (mesh.geometry) mesh.geometry.dispose();
+    if (mesh.material) mesh.material.dispose();
 
-    // Удаление из нашего массива
     gameObjects = gameObjects.filter(obj => obj.body !== body);
 }
 
 function clearGameObjects() {
-    gameObjects.forEach(obj => {
-        scene.remove(obj.mesh);
-        world.removeBody(obj.body);
-        if(obj.mesh.geometry) obj.mesh.geometry.dispose();
-        if(obj.mesh.material) obj.material.dispose();
-    });
-    gameObjects = [];
+    [...gameObjects].forEach(obj => removeGameObject(obj.mesh, obj.body));
 }
 
 // --- ОСНОВНОЙ ЦИКЛ АНИМАЦИИ ---
 const clock = new THREE.Clock();
-let lastTime;
 
-function animate(time) {
+function animate() {
     requestAnimationFrame(animate);
-
-    if (lastTime === undefined) {
-        lastTime = time;
-    }
-    const dt = (time - lastTime) / 1000;
+    const dt = clock.getDelta();
     
-    // Обновляем физический мир
-    world.step(1 / 60, dt);
+    if (isGameRunning) {
+        world.step(1 / 60, dt);
+    }
 
-    // Синхронизируем визуальные объекты с физическими телами
     for (const obj of gameObjects) {
         obj.mesh.position.copy(obj.body.position);
         obj.mesh.quaternion.copy(obj.body.quaternion);
     }
 
     renderer.render(scene, camera);
-    lastTime = time;
 }
 
 function onWindowResize() {
