@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Геометрический Тир</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Холст для рендеринга Three.js -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Интерфейс игры -->
+    <div id="ui-container">
+        <!-- Экран "Начать игру" -->
+        <div id="start-screen" class="overlay">
+            <div class="content">
+                <h1>Геометрический Тир</h1>
+                <p>Наведите прицел, вращая телефон, и нажимайте на экран, чтобы стрелять. Сбейте как можно больше фигур за 30 секунд!</p>
+                <button id="start-button">Начать</button>
+            </div>
+        </div>
+
+        <!-- Игровой интерфейс (таймер и счет) -->
+        <div id="game-ui" class="hidden">
+            <div id="timer">Время: 30</div>
+            <div id="score">Счет: 0</div>
+            <div id="crosshair">+</div>
+        </div>
+
+        <!-- Экран "Игра окончена" -->
+        <div id="end-screen" class="overlay hidden">
+            <div class="content">
+                <h2>Игра окончена!</h2>
+                <p id="final-score">Ваш счет: 0</p>
+                <button id="restart-button">Играть снова</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключаем библиотеки -->
+    <!-- Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/"
+            }
+        }
+    </script>
+    
+    <!-- Физический движок Cannon-es -->
+    <script src="https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"></script>
+    
+    <!-- Основной скрипт игры -->
+    <script type="module" src="main.js"></script>
+</body>
+</html>
