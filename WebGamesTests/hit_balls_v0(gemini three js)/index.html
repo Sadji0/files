@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<title>three.js physics - ammo.js breaking</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<div id="container"></div>
+		<div id="info">
+			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - physics breaking with <a href="https://github.com/kripken/ammo.js" target="_blank" rel="noopener">ammo.js</a>
+			<br/>Нажмите, чтобы выстрелить шаром.
+		</div>
+
+		<!-- Importmap для управления модулями -->
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "https://unpkg.com/three@0.165.0/build/three.module.js",
+					"three/addons/": "https://unpkg.com/three@0.165.0/examples/jsm/"
+				}
+			}
+		</script>
+
+		<!-- Загрузчик физического движка Ammo.js -->
+		<script src="https://unpkg.com/three@0.165.0/examples/js/libs/ammo.wasm.js"></script>
+		
+		<!-- Основной скрипт приложения как модуль -->
+		<script type="module" src="script.js"></script>
+	</body>
+</html>
